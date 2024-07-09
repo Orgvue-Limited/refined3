@@ -1,4 +1,4 @@
 package refined
 
 trait Validate[T, P]:
-  def apply(base: T): String | Null
+  def apply(base: T): Boolean

@@ -1,3 +1,4 @@
 package refined
 
-final case class Show[T, P](expr: String)
+trait Show[T, P]:
+  def apply(base: T): String
