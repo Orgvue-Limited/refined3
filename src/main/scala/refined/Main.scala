@@ -13,6 +13,10 @@ object Main extends App {
 
   val refinedNotEqualInt: Int Refined Not[Equal[5]] = 6
 
+  val refinedAndInt: Int Refined (Not[Equal[0]] And Not[Equal[2]]) = 1
+  
+  val refinedOrInt: Int Refined (Equal[0] Or Equal[2]) = 2
+
   println(Refined.refineV[Cat.type, Equal[Cat.type]](Cat))
   println(Refined.refineV[Cat.type, Equal[Dog.type]](Cat))
 
@@ -22,5 +26,9 @@ object Main extends App {
   println(Refined.refineV[Int, Not[Equal[5]]](6))
   println(Refined.refineV[Int, Not[Equal[5]]](5))
 
-  println(refinedInt.value)
+  println(Refined.refineV[Int, (Not[Equal[0]] And Not[Equal[2]])](0))
+  println(Refined.refineV[Int, (Not[Equal[0]] And Not[Equal[2]])](1))
+
+  println(Refined.refineV[Int, (Equal[0] Or Equal[2])](0))
+  println(Refined.refineV[Int, (Equal[0] Or Equal[2])](1))
 }
