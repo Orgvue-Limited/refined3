@@ -14,8 +14,8 @@ object Greater:
     then Proof.success[T, Greater[N]]
     else Proof.failure[T, Greater[N]]
 
-  implicit inline def greaterValidate[T, N](using N: Numeric[T], ev: N <:< T): Validate[T, Greater[N]] =
-    (base: T) => N.gt(base, ev(valueOf[N]))
+  implicit inline def greaterValidate[T, N](using N: Numeric[T], W: WitnessAs[N, T]): Validate[T, Greater[N]] =
+    (base: T) => N.gt(base, W.value)
 
   implicit inline def greaterShow[T, N]: Show[T, Greater[N]] =
     (base: T) => s"$base > ${valueOf[N]}"

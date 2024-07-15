@@ -23,7 +23,7 @@ class GreaterTests extends AnyFunSpec with Matchers {
 
   it("should work with combinations of different literal types") {
     val refinedGreaterInt: Int Refined Greater[5] = 6
-    val refinedGreaterLong: Long Refined Greater[5] = 8L
+    val refinedGreaterLong: Long Refined Greater[0] = 8L
     val refinedGreaterFloat: Float Refined Greater[5] = 10F
     val refinedGreaterDouble: Double Refined Greater[5] = 9D
 

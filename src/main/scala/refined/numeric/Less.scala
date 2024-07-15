@@ -14,8 +14,8 @@ object Less:
     then Proof.success[T, Less[N]]
     else Proof.failure[T, Less[N]]
 
-  implicit inline def lessValidate[T, N](using N: Numeric[T], ev: N <:< T): Validate[T, Less[N]] =
-    (base: T) => N.lt(base, ev(valueOf[N]))
+  implicit inline def lessValidate[T, N](using N: Numeric[T], W: WitnessAs[N, T]): Validate[T, Less[N]] =
+    (base: T) => N.lt(base, W.value)
 
   implicit inline def lessShow[T, N]: Show[T, Less[N]] =
     (base: T) => s"$base < ${valueOf[N]}"
