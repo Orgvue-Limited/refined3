@@ -7,6 +7,9 @@ lazy val core = (project in file("."))
     name := "core",
     scalacOptions ++= Seq(
       "-explain"
+    ),
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.2.18" % Test
     )
   )
 

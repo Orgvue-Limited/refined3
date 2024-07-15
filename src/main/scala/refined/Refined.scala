@@ -11,7 +11,7 @@ object Refined:
 
   def unapply[T, P](r: T Refined P): Some[T] = Some(r)
 
-  extension[T, P] (refined: T Refined P )
+  extension[T, P] (refined: T Refined P)
     transparent inline def value: T = refined
 
   transparent inline def refineV[T, P](value: T)(using
