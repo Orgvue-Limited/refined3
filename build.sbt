@@ -1,5 +1,6 @@
-ThisBuild / scalaVersion := "3.5.0-RC3"
-ThisBuild / organization := "com.refined"
+ThisBuild / scalaVersion := "3.5.0-RC4"
+ThisBuild / organization := "com.orgvue"
+ThisBuild / version      := "0.1.0"
 
 lazy val core = (project in file("."))
   .settings(
