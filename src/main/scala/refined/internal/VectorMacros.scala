@@ -9,6 +9,16 @@ object VectorMacros:
   def vectorSizeCode[T: Type](in: Expr[Vector[T]])(using q: Quotes): Expr[Int] =
     import quotes.reflect.*
 
+    def resolveIdent(ident: Ident): Option[Term] =
+      ident.symbol.tree match
+        case ValDef(_, _, Some(rhs))    => Some(rhs)
+        case DefDef(_, _, _, Some(rhs)) => Some(rhs)
+        case _                          => None
+
+    def failTree: Nothing =
+      val treeStr = in.asTerm.show(using Printer.TreeStructure)
+          q.reflect.report.errorAndAbort(s"Cannot determine size of Vector at compile time. Tree: $treeStr")
+
     def rec(tree: Term): Expr[Int] =
       tree match
         case Inlined(_, _, i) =>
@@ -29,9 +39,14 @@ object VectorMacros:
           Expr(0)
         case Apply(TypeApply(Select(Select(Select(Select(Ident("scala"), "collection"), "immutable"), "Vector"), "apply"), _), List(Typed(Repeated(xs, _), _))) =>
           Expr(xs.size)
+        case ident @ Ident(_) =>
+          resolveIdent(ident) match
+            case None        =>
+              failTree
+            case Some(value) =>
+              rec(value)
         case _ =>
-          val treeStr = in.asTerm.show(using Printer.TreeStructure)
-          q.reflect.report.errorAndAbort(s"Cannot determine size of Vector at compile time. Tree: $treeStr")
+          failTree
 
     rec(in.asTerm)
 
@@ -41,6 +56,10 @@ object VectorMacros:
   def vectorStringCode[T: Type](in: Expr[Vector[T]])(using q: Quotes): Expr[String] =
     import quotes.reflect.*
 
+    def failTree: Nothing =
+      val treeStr = in.asTerm.show(using Printer.TreeStructure)
+      q.reflect.report.errorAndAbort(s"Cannot transform vector to string in compile time. Tree: $treeStr")
+
     def transformTermToValue(tree: Term): String =
       tree match
         case Literal(lit) =>
@@ -48,6 +67,12 @@ object VectorMacros:
 
         case _ =>
           "?"
+
+    def resolveIdent(ident: Ident): Option[Term] =
+      ident.symbol.tree match
+        case ValDef(_, _, Some(rhs))    => Some(rhs)
+        case DefDef(_, _, _, Some(rhs)) => Some(rhs)
+        case _                          => None
 
     def rec(tree: Term): Expr[String] =
       tree match
@@ -69,8 +94,13 @@ object VectorMacros:
           Expr("Vector()")
         case Apply(TypeApply(Select(Select(Select(Select(Ident("scala"), "collection"), "immutable"), "Vector"), "apply"), _), List(Typed(Repeated(xs, _), _))) =>
           Expr(s"Vector(${xs.map(transformTermToValue).mkString(", ")})")
+        case ident @ Ident(_) =>
+          resolveIdent(ident) match
+            case None        =>
+              failTree
+            case Some(value) =>
+              rec(value)
         case _ =>
-          val treeStr = in.asTerm.show(using Printer.TreeStructure)
-          q.reflect.report.errorAndAbort(s"Cannot determine size of Vector at compile time. Tree: $treeStr")
+          failTree
 
     rec(in.asTerm)

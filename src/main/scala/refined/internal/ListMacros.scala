@@ -10,6 +10,16 @@ object ListMacros:
   def listSizeCode[T](in: Expr[List[T]])(using q: Quotes): Expr[Int] =
     import quotes.reflect.*
 
+    def resolveIdent(ident: Ident): Option[Term] =
+      ident.symbol.tree match
+        case ValDef(_, _, Some(rhs))    => Some(rhs)
+        case DefDef(_, _, _, Some(rhs)) => Some(rhs)
+        case _                          => None
+
+    def failTree: Nothing =
+      val treeStr = in.asTerm.show(using Printer.TreeStructure)
+      q.reflect.report.errorAndAbort(s"Cannot determine size of list in compile time. Tree: $treeStr")
+
     def rec(tree: Term): Expr[Int] =
       tree match
         case Inlined(_, _, i) =>
@@ -38,10 +48,14 @@ object ListMacros:
           Expr(0)
         case Select(Select(Select(Ident("scala"), "collection"), "immutable"), "Nil") =>
           Expr(0)
+        case ident @ Ident(_) =>
+          resolveIdent(ident) match
+            case None        =>
+              failTree
+            case Some(value) =>
+              rec(value)
         case _ =>
-          val treeStr = in.asTerm.show(using Printer.TreeStructure)
-
-          q.reflect.report.errorAndAbort(s"Cannot determine size of list in compile time. Tree: $treeStr")
+          failTree
 
     rec(in.asTerm)
 
@@ -51,6 +65,10 @@ object ListMacros:
   def listStringCode[T](in: Expr[List[T]])(using q: Quotes): Expr[String] =
     import quotes.reflect.*
 
+    def failTree: Nothing =
+      val treeStr = in.asTerm.show(using Printer.TreeStructure)
+      q.reflect.report.errorAndAbort(s"Cannot transform list to string in compile time. Tree: $treeStr")
+
     def transformTermToValue(tree: Term): String =
       tree match
         case Literal(lit) =>
@@ -58,6 +76,12 @@ object ListMacros:
 
         case _ =>
           "?"
+
+    def resolveIdent(ident: Ident): Option[Term] =
+      ident.symbol.tree match
+        case ValDef(_, _, Some(rhs))    => Some(rhs)
+        case DefDef(_, _, _, Some(rhs)) => Some(rhs)
+        case _                          => None
 
     def rec(tree: Term): Expr[String] =
       tree match
@@ -87,8 +111,13 @@ object ListMacros:
           Expr("Nil")
         case Select(Select(Select(Ident("scala"), "collection"), "immutable"), "Nil") =>
           Expr("Nil")
+        case ident @ Ident(_) =>
+          resolveIdent(ident) match
+            case None        =>
+              failTree
+            case Some(value) =>
+              rec(value)
         case _ =>
-          val treeStr = in.asTerm.show(using Printer.TreeStructure)
-          q.reflect.report.errorAndAbort(s"Cannot determine size of list in compiletime. Tree: $treeStr")
+          failTree
 
     rec(in.asTerm)

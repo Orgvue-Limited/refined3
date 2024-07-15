@@ -2,6 +2,8 @@ package refined
 
 import scala.quoted.*
 
+import scala.compiletime.summonInline
+
 infix opaque type Refined[+T, P] = T
 
 object Refined:
@@ -29,6 +31,10 @@ object Refined:
     inline expr: refined.Expr[T, P]
   ): T Refined P =
     refineCustom[T, P](value)(proof, expr)
+
+  implicit inline def refineM[T, P](inline value: T): T Refined P =
+    implicit def implicitOfValue: T = value
+    refineCustom[T, P](value)(summonInline[Proof[T, P]], summonInline[refined.Expr[T, P]])
 
   private[refined] transparent inline def refineCustom[T, P](value: T)(
     inline proof: Proof[T, P],
