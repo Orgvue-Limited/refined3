@@ -9,46 +9,15 @@ object ArrayMacros:
   def arraySizeCode[T: Type](in: Expr[Array[T]])(using q: Quotes): Expr[Int] =
     import quotes.reflect.*
 
-    def resolveIdent(ident: Ident): Option[Term] =
-      ident.symbol.tree match
-        case ValDef(_, _, Some(rhs))    => Some(rhs)
-        case DefDef(_, _, _, Some(rhs)) => Some(rhs)
-        case _                          => None
-
     def failTree: Nothing =
       val treeStr = in.asTerm.show(using Printer.TreeStructure)
-          q.reflect.report.errorAndAbort(s"Cannot determine size of array at compile time. Tree: $treeStr")
+      q.reflect.report.errorAndAbort(s"Cannot determine size of array at compile time. Tree: $treeStr")
 
-    def rec(tree: Term): Expr[Int] =
-      tree match
-        case Inlined(_, _, i) =>
-          rec(i)
-        case Apply(TypeApply(Select(Ident("Array"), "empty"), _), _) =>
-          Expr(0)
-        case Apply(Select(Ident("Array"), "apply"), List(Literal(_), Typed(Repeated(xs, _), _))) =>
-          Expr(1 + xs.size)
-        case Apply(Select(Ident("Array"), "apply"), List(Typed(Repeated(xs, _), _))) =>
-          Expr(xs.size)
-        case Apply(Apply(TypeApply(Select(Ident("Array"), "apply"), _), List(Typed(Repeated(xs, _), _))), _) =>
-          Expr(xs.size)
-        case Apply(TypeApply(Select(Select(Ident("scala"), "Array"), "empty"), _), _) =>
-          Expr(0)
-        case Apply(Select(Select(Ident("scala"), "Array"), "apply"), List(Literal(_), Typed(Repeated(xs, _), _))) =>
-          Expr(1 + xs.size)
-        case Apply(Select(Select(Ident("scala"), "Array"), "apply"), List(Typed(Repeated(xs, _), _))) =>
-          Expr(xs.size)
-        case Apply(Apply(TypeApply(Select(Select(Ident("scala"), "Array"), "apply"), _), List(Typed(Repeated(xs, _), _))), _) =>
-          Expr(xs.size)
-        case ident @ Ident(_) =>
-          resolveIdent(ident) match
-            case None        =>
-              failTree
-            case Some(value) =>
-              rec(value)
-        case _ =>
-          failTree
-
-    rec(in.asTerm)
+    arrayCode[T, Int](q)(in)(
+      onEmptyExpr = Expr(0),
+      onTerms = xs => Expr(xs.size),
+      failTree = failTree
+    )
 
   transparent inline def arrayString[T](inline in: Array[T]): String =
     ${ arrayStringCode('in) }
@@ -68,32 +37,45 @@ object ArrayMacros:
         case _ =>
           "?"
 
+    arrayCode[T, String](q)(in)(
+      onEmptyExpr = Expr("Array()"),
+      onTerms = xs => Expr(s"Array(${xs.map(transformTermToValue).mkString(", ")})"),
+      failTree = failTree
+    )
+
+  def arrayCode[T, R](q: Quotes)(in: Expr[Array[T]])(
+    onEmptyExpr: => Expr[R],
+    onTerms: List[q.reflect.Term] => Expr[R],
+    failTree: => Nothing
+  ): Expr[R] =
+    import q.reflect.*
+
     def resolveIdent(ident: Ident): Option[Term] =
       ident.symbol.tree match
         case ValDef(_, _, Some(rhs))    => Some(rhs)
         case DefDef(_, _, _, Some(rhs)) => Some(rhs)
         case _                          => None
 
-    def rec(tree: Term): Expr[String] =
+    def rec(tree: Term): Expr[R] =
       tree match
         case Inlined(_, _, i) =>
           rec(i)
         case Apply(TypeApply(Select(Ident("Array"), "empty"), _), _) =>
-          Expr("Array()")
+          onEmptyExpr
         case Apply(Select(Ident("Array"), "apply"), List(lit @ Literal(_), Typed(Repeated(xs, _), _))) =>
-          Expr(s"Array(${transformTermToValue(lit)}, ${xs.map(transformTermToValue).mkString(", ")})")
+          onTerms(lit :: xs)
         case Apply(Select(Ident("Array"), "apply"), List(Typed(Repeated(xs, _), _))) =>
-          Expr(s"Array(${xs.map(transformTermToValue).mkString(", ")})")
+          onTerms(xs)
         case Apply(Apply(TypeApply(Select(Ident("Array"), "apply"), _), List(Typed(Repeated(xs, _), _))), _) =>
-          Expr(s"Array(${xs.map(transformTermToValue).mkString(", ")})")
+          onTerms(xs)
         case Apply(TypeApply(Select(Select(Ident("scala"), "Array"), "empty"), _), _) =>
-          Expr("Array()")
+          onEmptyExpr
         case Apply(Select(Select(Ident("scala"), "Array"), "apply"), List(lit @ Literal(_), Typed(Repeated(xs, _), _))) =>
-           Expr(s"Array(${transformTermToValue(lit)}, ${xs.map(transformTermToValue).mkString(", ")})")
+          onTerms(lit :: xs)
         case Apply(Select(Select(Ident("scala"), "Array"), "apply"), List(Typed(Repeated(xs, _), _))) =>
-          Expr(s"Array(${xs.map(transformTermToValue).mkString(", ")})")
+          onTerms(xs)
         case Apply(Apply(TypeApply(Select(Select(Ident("scala"), "Array"), "apply"), _), List(Typed(Repeated(xs, _), _))), _) =>
-          Expr(s"Array(${xs.map(transformTermToValue).mkString(", ")})")
+          onTerms(xs)
         case ident @ Ident(_) =>
           resolveIdent(ident) match
             case None        =>

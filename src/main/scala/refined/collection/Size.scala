@@ -41,10 +41,10 @@ object Size:
   implicit inline def sizeShow[T, N](using N: WitnessAs[N, Long]): Show[T, Size[N]] =
     (base: T) => s"size(${base}) == ${N.value}"
 
-  protected transparent inline def proof[T, N <: Int](inline size: Int): Proof[T, Size[N]] =
+  private transparent inline def proof[T, N <: Int](inline size: Int): Proof[T, Size[N]] =
     inline if size == constValueOf[N]
     then Proof.success[T, Size[N]]
     else Proof.failure[T, Size[N]]
 
-  protected transparent inline def expr[T, N <: Int](inline expr: String): Expr[T, Size[N]] =
+  private transparent inline def expr[T, N <: Int](inline expr: String): Expr[T, Size[N]] =
     Expr[T, Size[N]]("size(" + expr + ") == " + stringOf[N])

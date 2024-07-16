@@ -4,7 +4,7 @@ package generic
 final case class Not[P](p: P)
 
 object Not:
-  transparent implicit inline def notExpr[T, P](using expr: Expr[T, P]): Expr[T, Not[P]] =
+  transparent implicit inline def notExpr[T, P](using inline expr: Expr[T, P]): Expr[T, Not[P]] =
     Expr[T, Not[P]]("Not (" + expr.value + ")")
 
   transparent implicit inline def notProof[T, P](using proof: Proof[T, P]): Proof[T, Not[P]] =
