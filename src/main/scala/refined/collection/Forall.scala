@@ -7,7 +7,7 @@ final case class Forall[P](p: P)
 
 object Forall:
   // List
-  transparent implicit inline def listForallExpr[A, P](using list: List[A]): Expr[List[A], Forall[P]] =
+  transparent implicit inline def listForallExpr[A, P](using inline list: List[A]): Expr[List[A], Forall[P]] =
     Expr[List[A], Forall[P]](ForallMacros.listExprStringForAll[A, P](list))
 
   implicit inline def nilExpr[P]: Expr[Nil.type, Forall[P]] =
@@ -20,14 +20,14 @@ object Forall:
     Proof.success[Nil.type, Forall[P]]
 
   // Array
-  transparent implicit inline def arrayForallExpr[A, P](using array: Array[A]): Expr[Array[A], Forall[P]] =
+  transparent implicit inline def arrayForallExpr[A, P](using inline array: Array[A]): Expr[Array[A], Forall[P]] =
     Expr[Array[A], Forall[P]](ForallMacros.arrayExprStringForAll[A, P](array))
 
   transparent implicit inline def arrayForallProof[A, P](using array: Array[A]): Proof[Array[A], Forall[P]] =
     proof[Array[A], P](ForallMacros.arrayForAll[A, P](array))
 
   // Vector
-  transparent implicit inline def vectorForallExpr[A, P](using vector: Vector[A]): Expr[Vector[A], Forall[P]] =
+  transparent implicit inline def vectorForallExpr[A, P](using inline vector: Vector[A]): Expr[Vector[A], Forall[P]] =
     Expr[Vector[A], Forall[P]](ForallMacros.vectorExprStringForAll[A, P](vector))
 
   transparent implicit inline def vectorForallProof[A, P](using vector: Vector[A]): Proof[Vector[A], Forall[P]] =

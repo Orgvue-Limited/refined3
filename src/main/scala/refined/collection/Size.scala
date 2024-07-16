@@ -7,7 +7,7 @@ final case class Size[N](n: N)
 
 object Size:
   // List
-  implicit inline def listExpr[A, N <: Int](using list: List[A]): Expr[List[A], Size[N]] =
+  implicit inline def listExpr[A, N <: Int](using inline list: List[A]): Expr[List[A], Size[N]] =
     expr[List[A], N](ListMacros.listString[A](list))
 
   implicit inline def nilExpr: Expr[Nil.type, Size[0]] =
@@ -20,14 +20,14 @@ object Size:
     Proof.success[Nil.type, Size[0]]
 
   // Array
-  implicit inline def arrayExpr[A, N <: Int](using array: Array[A]): Expr[Array[A], Size[N]] =
+  implicit inline def arrayExpr[A, N <: Int](using inline array: Array[A]): Expr[Array[A], Size[N]] =
     expr[Array[A], N](ArrayMacros.arrayString[A](array))
 
   transparent implicit inline def arrayProof[A, N <: Int](using array: Array[A]): Proof[Array[A], Size[N]] =
     proof[Array[A], N](ArrayMacros.arraySize[A](array))
 
   // Vector
-  implicit inline def vectorExpr[A, N <: Int](using vector: Vector[A]): Expr[Vector[A], Size[N]] =
+  implicit inline def vectorExpr[A, N <: Int](using inline vector: Vector[A]): Expr[Vector[A], Size[N]] =
     expr[Vector[A], N](VectorMacros.vectorString[A](vector))
 
   transparent implicit inline def vectorProof[A, N <: Int](using vector: Vector[A]): Proof[Vector[A], Size[N]] =
@@ -41,6 +41,7 @@ object Size:
   implicit inline def sizeShow[T, N](using N: WitnessAs[N, Long]): Show[T, Size[N]] =
     (base: T) => s"size(${base}) == ${N.value}"
 
+  // Helpers
   private transparent inline def proof[T, N <: Int](inline size: Int): Proof[T, Size[N]] =
     inline if size == constValueOf[N]
     then Proof.success[T, Size[N]]
