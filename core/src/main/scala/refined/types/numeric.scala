@@ -2,7 +2,7 @@ package refined.types
 
 import refined.{Refined, RefinedTypeOps}
 import refined.generic.And
-import refined.numeric.{Positive, Negative, NonNegative, NonPositive}
+import refined.numeric.{Interval, Positive, Negative, NonNegative, NonPositive}
 
 object numeric extends numeric
 
@@ -27,6 +27,8 @@ trait numeric:
   type NegDouble    = Double Refined Negative
   type NonPosDouble = Double Refined NonPositive
 
+  type PortNumber   = Int Refined Interval.Closed[0, 65535]
+
   object PosInt    extends RefinedTypeOps[Int, Positive]
   object NonNegInt extends RefinedTypeOps[Int, NonNegative]
   object NegInt    extends RefinedTypeOps[Int, Negative]
@@ -46,3 +48,5 @@ trait numeric:
   object NonNegDouble extends RefinedTypeOps[Double, NonNegative]
   object NegDouble    extends RefinedTypeOps[Double, Negative]
   object NonPosDouble extends RefinedTypeOps[Double, NonPositive]
+
+  object PortNumber extends RefinedTypeOps[Int, Interval.Closed[0, 65535]]

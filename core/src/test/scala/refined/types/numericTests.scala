@@ -125,4 +125,20 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
       assert(NegDouble.from(-1D).isRight)
     }
   }
+
+  describe("PortNumber") {
+    it("should typecheck for a valid case") {
+      val port: PortNumber = 9001
+    }
+
+    it("should fail compilation for invalid cases") {
+      assertDoesNotCompile("val num: PortNumber = -1")
+      assertDoesNotCompile("val num: PortNumber = 165535")
+    }
+
+    it("should validate at runtime correctly") {
+      assert(PortNumber.from(8001).isRight)
+      assert(PortNumber.from(-1).isLeft)
+    }
+  }
 }
