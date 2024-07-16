@@ -18,6 +18,11 @@ object Refined:
   extension[T, P] (refined: T Refined P)
     transparent inline def value: T = refined
 
+  inline def refineOption[T, P](value: T)(using validate: Validate[T, P]): Option[T Refined P] =
+    if validate(value)
+    then Some(Refined.unsafe[T, P](value))
+    else None
+
   transparent inline def refineV[T, P](value: T)(using
     validate: Validate[T, P],
     show: Show[T, P]
