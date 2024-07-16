@@ -5,7 +5,7 @@ import scala.compiletime.{constValue, error}
 
 import scala.compiletime.ops.{double, int, float, long}
 
-final case class WitnessAs[+A, +B](value: B)
+final case class WitnessAs[A, +B](value: B)
 
 object WitnessAs:
   inline def apply[A, B](implicit ev: WitnessAs[A, B]): WitnessAs[A, B] =
@@ -42,6 +42,14 @@ object WitnessAs:
 
   transparent inline given intWitnessAsLong[A <: Int]: WitnessAs[A, int.ToLong[A]] =
     inline val a = constValue[int.ToLong[A]]
+    WitnessAs(a)
+
+  transparent inline given intWitnessAsFloat[A <: Int]: WitnessAs[A, int.ToFloat[A]] =
+    inline val a = constValue[int.ToFloat[A]]
+    WitnessAs(a)
+
+  transparent inline given intWitnessAsDouble[A <: Int]: WitnessAs[A, int.ToDouble[A]] =
+    inline val a = constValue[int.ToDouble[A]]
     WitnessAs(a)
 
   transparent inline given floatWitnessAsLong[A <: Float]: WitnessAs[A, float.ToLong[A]] =

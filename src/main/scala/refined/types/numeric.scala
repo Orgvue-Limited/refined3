@@ -1,6 +1,6 @@
 package refined.types
 
-import refined.Refined
+import refined.{Refined, RefinedTypeOps}
 import refined.generic.And
 import refined.numeric.{Positive, Negative, NonNegative, NonPositive}
 
@@ -26,3 +26,23 @@ trait numeric:
   type NonNegDouble = Double Refined NonNegative
   type NegDouble    = Double Refined Negative
   type NonPosDouble = Double Refined NonPositive
+
+  object PosInt    extends RefinedTypeOps[Int, Positive]
+  object NonNegInt extends RefinedTypeOps[Int, NonNegative]
+  object NegInt    extends RefinedTypeOps[Int, Negative]
+  object NonPosInt extends RefinedTypeOps[Int, NonPositive]
+
+  object PosLong    extends RefinedTypeOps[Long, Positive]
+  object NonNegLong extends RefinedTypeOps[Long, NonNegative]
+  object NegLong    extends RefinedTypeOps[Long, Negative]
+  object NonPosLong extends RefinedTypeOps[Long, NonPositive]
+
+  object PosFloat    extends RefinedTypeOps[Float, Positive]
+  object NonNegFloat extends RefinedTypeOps[Float, NonNegative]
+  object NegFloat    extends RefinedTypeOps[Float, Negative]
+  object NonPosFloat extends RefinedTypeOps[Float, NonPositive]
+
+  object PosDouble    extends RefinedTypeOps[Double, Positive]
+  object NonNegDouble extends RefinedTypeOps[Double, NonNegative]
+  object NegDouble    extends RefinedTypeOps[Double, Negative]
+  object NonPosDouble extends RefinedTypeOps[Double, NonPositive]

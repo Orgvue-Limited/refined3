@@ -14,6 +14,11 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
     it("should fail compilation for invalid cases") {
       assertDoesNotCompile("val num: PosInt = -1")
     }
+
+    it("should validate at runtime correctly") {
+      assert(PosInt.from(5).isRight)
+      assert(PosInt.from(-1).isLeft)
+    }
   }
 
   describe("NegInt") {
@@ -23,6 +28,11 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
 
     it("should fail compilation for invalid cases") {
       assertDoesNotCompile("val num: NegInt = 1")
+    }
+
+    it("should validate at runtime correctly") {
+      assert(NegInt.from(5).isLeft)
+      assert(NegInt.from(-1).isRight)
     }
   }
 
@@ -34,6 +44,11 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
     it("should fail compilation for invalid cases") {
       assertDoesNotCompile("val num: PosLong = -1L")
     }
+
+    it("should validate at runtime correctly") {
+      assert(PosLong.from(5L).isRight)
+      assert(PosLong.from(-1L).isLeft)
+    }
   }
 
   describe("NegLong") {
@@ -43,6 +58,11 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
 
     it("should fail compilation for invalid cases") {
       assertDoesNotCompile("val num: NegLong = 1L")
+    }
+
+    it("should validate at runtime correctly") {
+      assert(NegLong.from(5L).isLeft)
+      assert(NegLong.from(-1L).isRight)
     }
   }
 
@@ -54,6 +74,11 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
     it("should fail compilation for invalid cases") {
       assertDoesNotCompile("val num: PosFloat = -1F")
     }
+
+    it("should validate at runtime correctly") {
+      assert(PosFloat.from(5F).isRight)
+      assert(PosFloat.from(-1F).isLeft)
+    }
   }
 
   describe("NegFloat") {
@@ -63,6 +88,11 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
 
     it("should fail compilation for invalid cases") {
       assertDoesNotCompile("val num: NegFloat = 1F")
+    }
+
+    it("should validate at runtime correctly") {
+      assert(NegFloat.from(5F).isLeft)
+      assert(NegFloat.from(-1F).isRight)
     }
   }
 
@@ -74,6 +104,11 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
     it("should fail compilation for invalid cases") {
       assertDoesNotCompile("val num: PosDouble = -1D")
     }
+
+    it("should validate at runtime correctly") {
+      assert(PosDouble.from(5D).isRight)
+      assert(PosDouble.from(-1D).isLeft)
+    }
   }
 
   describe("NegDouble") {
@@ -83,6 +118,11 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
 
     it("should fail compilation for invalid cases") {
       assertDoesNotCompile("val num: NegDouble = 1D")
+    }
+
+    it("should validate at runtime correctly") {
+      assert(NegDouble.from(5D).isLeft)
+      assert(NegDouble.from(-1D).isRight)
     }
   }
 }
