@@ -1,3 +1,3 @@
 package refined3.types
 
-object all extends collection with numeric with string
+object all extends collection with numeric with string with time

@@ -1,7 +1,5 @@
 package refined3.types
 
-import refined3.Refined
-
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 

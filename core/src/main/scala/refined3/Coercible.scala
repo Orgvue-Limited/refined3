@@ -12,6 +12,3 @@ object Coercible:
 
   extension [A] (repr: A)
     inline def coerce[B](implicit ev: Coercible[A, B]): B = repr.asInstanceOf[B]
-
-  given refinedToValue[T, P]: Coercible[T Refined P, T] =
-    Coercible.instance

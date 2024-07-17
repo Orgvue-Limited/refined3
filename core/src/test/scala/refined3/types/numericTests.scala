@@ -1,7 +1,5 @@
 package refined3.types
 
-import refined3.Refined
-
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -9,6 +7,10 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
   describe("PosInt") {
     it("should typecheck for a valid case") {
       val num: PosInt = 5
+
+      def func(num: PosInt): Int = num.value
+
+      val int = func(5)
     }
 
     it("should fail compilation for invalid cases") {
