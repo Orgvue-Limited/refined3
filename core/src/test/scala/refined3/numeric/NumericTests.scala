@@ -109,4 +109,79 @@ class NumericTests extends AnyFunSpec with Matchers {
       assertDoesNotCompile("val num: Int Refined NonNegative = -1")
     }
   }
+
+  describe("Divisible") {
+    it("should work with literals") {
+      val num: Int Refined Divisible[2] = 10
+      assert(num.value == 10)
+    }
+
+    it("should validate at runtime correctly") {
+      assert(Refined.refineV[Int, Divisible[2]](5).isLeft)
+      assert(Refined.refineV[Int, Divisible[2]](6).isRight)
+      assert(Refined.refineV[Long, Divisible[2]](-5L).isLeft)
+    }
+
+    it("should fail compilation for invalid cases") {
+      assertDoesNotCompile("val num: Int Refined Divisible[2] = 3")
+    }
+  }
+
+  describe("Even") {
+    it("should work with literals") {
+      val num: Int Refined Even = 10
+      assert(num.value == 10)
+    }
+
+    it("should validate at runtime correctly") {
+      assert(Refined.refineV[Int, Even](5).isLeft)
+      assert(Refined.refineV[Int, Even](6).isRight)
+      assert(Refined.refineV[Long, Even](-5L).isLeft)
+    }
+
+    it("should fail compilation for invalid cases") {
+      assertDoesNotCompile("val num: Int Refined Even = 3")
+    }
+  }
+
+  describe("Odd") {
+    it("should work with literals") {
+      val num: Int Refined Odd = 11
+      assert(num.value == 11)
+    }
+
+    it("should validate at runtime correctly") {
+      assert(Refined.refineV[Int, Odd](5).isRight)
+      assert(Refined.refineV[Int, Odd](6).isLeft)
+      assert(Refined.refineV[Long, Odd](-5L).isRight)
+    }
+
+    it("should fail compilation for invalid cases") {
+      assertDoesNotCompile("val num: Int Refined Odd = 2")
+    }
+  }
+
+  describe("Complex Cases") {
+    import refined3.generic.{And, Equal, Or}
+
+    type MemoryPredicate = Equal[512] Or (Divisible[1024] And LessEqual[30720])
+    type Memory          = Int Refined MemoryPredicate
+
+    it("should infer type properly") {
+      val memory0: Memory = 512
+      val memory1: Memory = 2048
+      val memory2: Memory = 4096
+    }
+
+    it("should validate at runtime correctly") {
+      assert(Refined.refineV[Int, MemoryPredicate](512).isRight)
+      assert(Refined.refineV[Int, MemoryPredicate](2048).isRight)
+      assert(Refined.refineV[Int, MemoryPredicate](2049).isLeft)
+      assert(Refined.refineV[Int, MemoryPredicate](5000).isLeft)
+    }
+
+    it("should fail compilation for invalid cases") {
+      assertDoesNotCompile("val num: Memory = 5000")
+    }
+  }
 }

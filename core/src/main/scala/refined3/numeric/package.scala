@@ -9,6 +9,10 @@ package object numeric:
   type NonPositive     = Not[Positive]
   type Negative        = Less[0]
   type NonNegative     = Not[Negative]
+  type Divisible[N]    = Modulo[N, 0]
+  type NonDivisible[N] = Not[Divisible[N]]
+  type Even            = Divisible[2]
+  type Odd             = Not[Even]
 
   object Interval:
     type Open[L, H]       = Greater[L] And Less[H]
