@@ -53,4 +53,11 @@ class stringTests extends AnyFunSpec with Matchers with string {
       assert(NonEmptyFiniteString[3].from("").isLeft)
     }
   }
+
+  describe("IPv4"){
+    it("should typecheck for a valid case") {
+      val ipv4_0: IPv4 = "192.168.40.39"
+      val ipv4_1       = IPv4("192.168.40.38")
+    }
+  }
 }
