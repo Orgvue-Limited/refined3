@@ -9,6 +9,12 @@ import scala.reflect.ClassTag
 object collection extends collection
 
 trait collection:
+  import compiletime.ops.int.*
+
+  type Repeat[A, N <: Int] <: Tuple = N match
+    case 0    => EmptyTuple
+    case S[n] => A *: Repeat[A, n]
+
   type NonEmptyArray[A]           = Array[A] Refined NonEmpty
   type NonEmptyList[A]            = List[A] Refined NonEmpty
   type NonEmptyVector[A]          = Vector[A] Refined NonEmpty
@@ -47,14 +53,23 @@ trait collection:
       new RefinedTypeOps[Vector[A], NonEmpty]
 
   object FixedArray:
+    inline def of[A: ClassTag, N <: Int](values: Repeat[A, N]): FixedArray[A, N] =
+      apply[A, N].unsafe(values.toList.asInstanceOf[List[A]].toArray)
+
     inline def apply[A, N <: Int]: RefinedTypeOps[Array[A], Size[N]] =
       new RefinedTypeOps[Array[A], Size[N]]
 
   object FixedList:
+    inline def of[A, N <: Int](values: Repeat[A, N]): FixedList[A, N] =
+      apply[A, N].unsafe(values.toList.asInstanceOf[List[A]])
+
     inline def apply[A, N <: Int]: RefinedTypeOps[List[A], Size[N]] =
       new RefinedTypeOps[List[A], Size[N]]
 
   object FixedVector:
+    inline def of[A, N <: Int](values: Repeat[A, N]): FixedVector[A, N] =
+      apply[A, N].unsafe(values.toList.toVector.asInstanceOf[Vector[A]])
+
     inline def apply[A, N <: Int]: RefinedTypeOps[Vector[A], Size[N]] =
       new RefinedTypeOps[Vector[A], Size[N]]
 

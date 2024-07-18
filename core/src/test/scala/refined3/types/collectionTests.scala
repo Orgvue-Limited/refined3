@@ -45,6 +45,8 @@ class collectionTests extends AnyFunSpec with Matchers with collection {
   describe("FixedArray") {
     it("should typecheck for a valid case") {
       val array: FixedArray[Int, 5] = Array(1, 2, 3, 4, 5)
+
+      val array2 = FixedArray.of[Int, 5](1, 2, 3, 4, 5)
     }
 
     it("should fail compilation for invalid cases") {
@@ -56,6 +58,20 @@ class collectionTests extends AnyFunSpec with Matchers with collection {
       assert(FixedArray[Int, 5].from(Array(1, 2, 3, 4, 5)).isRight)
       assert(FixedArray[Int, 5].from(Array(1, 2, 3, 4)).isLeft)
       assert(FixedArray[Int, 5].from(Array[Int]()).isLeft)
+    }
+  }
+
+  describe("FixedList") {
+    it("should typecheck for a valid case") {
+      val list: FixedList[Int, 5] = List(1, 2, 3, 4, 5)
+      val list2 = FixedList.of[Int, 5](1, 2, 3, 4, 5)
+    }
+  }
+
+  describe("FixedVector") {
+    it("should typecheck for a valid case") {
+      val vector: FixedVector[Int, 5] = Vector(1, 2, 3, 4, 5)
+      val vector2 = FixedVector.of[Int, 5](1, 2, 3, 4, 5)
     }
   }
 
