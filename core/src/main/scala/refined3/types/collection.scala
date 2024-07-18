@@ -4,6 +4,8 @@ import refined3.{Refined, RefinedTypeOps}
 import refined3.collection.{MinSize, MaxSize, NonEmpty, Size}
 import refined3.generic.And
 
+import scala.reflect.ClassTag
+
 object collection extends collection
 
 trait collection:
@@ -24,14 +26,23 @@ trait collection:
   type NonEmptyFiniteVector[A, N] = Vector[A] Refined (MinSize[1] And MaxSize[N])
 
   object NonEmptyArray:
+    inline def of[A: ClassTag](value: A, values: A*): NonEmptyArray[A] =
+      apply[A].unsafe(value +: Array[A](values*))
+
     inline def apply[A]: RefinedTypeOps[Array[A], NonEmpty] =
       new RefinedTypeOps[Array[A], NonEmpty]
 
   object NonEmptyList:
+    inline def of[A](value: A, values: A*): NonEmptyList[A] =
+      apply[A].unsafe(value :: List[A](values*))
+
     inline def apply[A]: RefinedTypeOps[List[A], NonEmpty] =
       new RefinedTypeOps[List[A], NonEmpty]
 
   object NonEmptyVector:
+    inline def of[A](value: A, values: A*): NonEmptyVector[A] =
+      apply[A].unsafe(value +: Vector[A](values*))
+
     inline def apply[A]: RefinedTypeOps[Vector[A], NonEmpty] =
       new RefinedTypeOps[Vector[A], NonEmpty]
 

@@ -1,6 +1,6 @@
 package refined3.types
 
-import refined3.{Refined, RefinedTypeOps}
+import refined3.{Refined, RefinedPrimitiveOps}
 import refined3.numeric.Interval.Closed
 
 object time extends time
@@ -13,9 +13,9 @@ trait time:
   type Day    = Int Refined Closed[1, 31]
   type Month  = Int Refined Closed[1, 12]
 
-  object Millis extends RefinedTypeOps[Int, Closed[0, 999]]
-  object Second extends RefinedTypeOps[Int, Closed[0, 59]]
-  object Minute extends RefinedTypeOps[Int, Closed[0, 59]]
-  object Hour   extends RefinedTypeOps[Int, Closed[0, 23]]
-  object Day    extends RefinedTypeOps[Int, Closed[1, 31]]
-  object Month  extends RefinedTypeOps[Int, Closed[1, 12]]
+  object Millis extends RefinedPrimitiveOps[Int, Closed[0, 999]]
+  object Second extends RefinedPrimitiveOps[Int, Closed[0, 59]]
+  object Minute extends RefinedPrimitiveOps[Int, Closed[0, 59]]
+  object Hour   extends RefinedPrimitiveOps[Int, Closed[0, 23]]
+  object Day    extends RefinedPrimitiveOps[Int, Closed[1, 31]]
+  object Month  extends RefinedPrimitiveOps[Int, Closed[1, 12]]

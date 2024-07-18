@@ -7,7 +7,7 @@ import scala.compiletime.ops.{double, int, float, long}
 
 final case class WitnessAs[A, +B](value: B)
 
-object WitnessAs:
+object WitnessAs extends WitnessAs1:
   inline def apply[A, B](implicit ev: WitnessAs[A, B]): WitnessAs[A, B] =
     ev
 
@@ -26,6 +26,11 @@ object WitnessAs:
       case a =>
         error(s"WitnessAs: $a is not in [Int.MinValue, Int.MaxValue]")
 
+  transparent inline given intWitnessAsLong[A <: Int]: WitnessAs[A, int.ToLong[A]] =
+    inline val a = constValue[int.ToLong[A]]
+    WitnessAs(a)
+
+trait WitnessAs1:
   transparent inline given floatWitnessAsInt[A <: Float]: WitnessAs[A, float.ToInt[A]] =
     inline constValue[A] match
       case a if a >= Int.MinValue && a <= Int.MaxValue =>
@@ -39,10 +44,6 @@ object WitnessAs:
         WitnessAs[A, double.ToInt[A]](constValue[double.ToInt[A]])
       case a =>
         error(s"WitnessAs: $a is not in [Int.MinValue, Int  .MaxValue]")
-
-  transparent inline given intWitnessAsLong[A <: Int]: WitnessAs[A, int.ToLong[A]] =
-    inline val a = constValue[int.ToLong[A]]
-    WitnessAs(a)
 
   transparent inline given intWitnessAsFloat[A <: Int]: WitnessAs[A, int.ToFloat[A]] =
     inline val a = constValue[int.ToFloat[A]]

@@ -7,6 +7,9 @@ class collectionTests extends AnyFunSpec with Matchers with collection {
   describe("NonEmptyList") {
     it("should typecheck for a valid case") {
       val list: NonEmptyList[Int] = List(1, 2, 3)
+      val nonEmptyList = NonEmptyList[Int](List(1, 2, 3))
+      val nonEmptyList2 = NonEmptyList.of(1, 2, 3)
+      assert(nonEmptyList2.value == List(1, 2, 3))
     }
 
     it("should fail compilation for invalid cases") {
@@ -18,6 +21,24 @@ class collectionTests extends AnyFunSpec with Matchers with collection {
       assert(NonEmptyList[Int].from(List(1)).isRight)
       assert(NonEmptyList[Int].from(List()).isLeft)
       assert(NonEmptyList[Int].from(Nil).isLeft)
+    }
+  }
+
+  describe("NonEmptyVector") {
+    it("should typecheck for a valid case") {
+      val vector: NonEmptyVector[Int] = Vector(1, 2, 3)
+      val nonEmptyVector = NonEmptyVector[Int](Vector(1, 2, 3))
+      val nonEmptyVector2 = NonEmptyVector.of(1, 2, 3)
+      assert(nonEmptyVector2.value == Vector(1, 2, 3))
+    }
+  }
+
+  describe("NonEmptyArray") {
+    it("should typecheck for a valid case") {
+      val array: NonEmptyArray[Int] = Array(1, 2, 3)
+      val nonEmptyArray = NonEmptyArray[Int](Array(1, 2, 3))
+      val nonEmptyArray2 = NonEmptyArray.of(1, 2, 3)
+      assert(nonEmptyArray2.value.toList == List(1, 2, 3))
     }
   }
 

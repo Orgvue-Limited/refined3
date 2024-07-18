@@ -7,6 +7,7 @@ class stringTests extends AnyFunSpec with Matchers with string {
   describe("NonEmptyString") {
     it("should typecheck for a valid case") {
       val str: NonEmptyString = "Hello"
+      val nonEmptyString = NonEmptyString("Hello")
     }
 
     it("should fail compilation for invalid cases") {
@@ -22,6 +23,7 @@ class stringTests extends AnyFunSpec with Matchers with string {
   describe("FiniteString") {
     it("should typecheck for a valid case") {
       val str: FiniteString[10] = "Hello"
+      val finiteString = FiniteString[10]("Hello")
     }
 
     it("should fail compilation for invalid cases") {

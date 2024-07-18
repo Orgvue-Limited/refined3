@@ -7,6 +7,7 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
   describe("PosInt") {
     it("should typecheck for a valid case") {
       val num: PosInt = 5
+      val posInt: PosInt = PosInt(5)
 
       def func(num: PosInt): Int = num.value
 
@@ -56,6 +57,7 @@ class numericTests extends AnyFunSpec with Matchers with numeric {
   describe("NegLong") {
     it("should typecheck for a valid case") {
       val num: NegLong = -5L
+      val long: NegLong = NegLong(-5L)
     }
 
     it("should fail compilation for invalid cases") {
