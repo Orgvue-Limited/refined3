@@ -1,7 +1,7 @@
 lazy val settings =
   Seq(
     organization := "com.orgvue",
-    scalaVersion := "3.5.0-RC4",
+    scalaVersion := "3.5.2",
     version := "0.1.0",
     scalacOptions := Seq("-explain")
   )
